@@ -276,10 +276,11 @@ fn generate_index_page(tasks_dir: &Path, output_dir: &Path) -> std::io::Result<(
         CSS_TEMPLATE
     );
 
-    for entry in fs::read_dir(tasks_dir)? {
-        let entry = entry?;
-        let path = entry.path();
-        let task_name = path.file_name().unwrap().to_string_lossy();
+    let mut tasks: Vec<_> = fs::read_dir(tasks_dir)?.map(|x| x.unwrap().path()).collect();
+    tasks.sort();
+
+    for path in tasks {
+        let task_name = path.file_name().unwrap().to_string_lossy().to_string();
         let content = fs::read_to_string(&path)?;
         let puzzle_sets: Vec<Puzzle> = serde_json::from_str(&content)?;
 
