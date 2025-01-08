@@ -3,6 +3,9 @@ use std::fs::{self, File};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
+// CHANGE THIS IF YOU WANT MORE EXAMPLES LOCALLY
+const TAKE_EXAMPLES: usize = 50; // MAX 1000
+
 #[derive(Serialize, Deserialize, Debug)]
 struct Puzzle {
     input: Vec<Vec<i64>>,
@@ -225,18 +228,20 @@ fn generate_single_task_page(task_path: &Path, output_dir: &Path) -> std::io::Re
         <body>
             <a href="index.html">go back to all tasks</a>
             <h1>{} (<a href="https://arcprize.org/play?task={}">original</a>)</h1>
-            <h3>({} examples)</h3>
+            <h3>{} examples</h3>
+            <h3>Only first {} examples is shown, if you want more, run <a href="https://github.com/optozorax/re-arc">code</a> locally.</h3>
             <div class="task-container">
         "#,
         task_name,
         CSS_TEMPLATE,
         task_name,
         task_name,
-        puzzle_sets.len()
+        puzzle_sets.len(), 
+        TAKE_EXAMPLES,
     );
 
     // Create task HTML for each puzzle in the set
-    for (j, puzzle) in puzzle_sets.iter().enumerate() {
+    for (j, puzzle) in puzzle_sets.iter().enumerate().take(TAKE_EXAMPLES) {
         task_html.push_str(&create_task_html(puzzle, &format!("{}", j)));
     }
 
